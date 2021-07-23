@@ -1,4 +1,4 @@
 main.py
 main2.py
 get-pip.py
-__pycache__/*
+__pycache__/
