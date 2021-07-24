@@ -19,6 +19,7 @@ class PortfolioBuilder:
         self.bucket_delimiters = bucket_delimiters
         self.short_limit = short_limit
 
+        self.year = None
         self.tickers = None
         self.data = None
         self.prices = None
@@ -81,10 +82,9 @@ class PortfolioBuilder:
         return self
         
         
-    def get_benchmark_annual_return(self,
-                                    year):
+    def get_benchmark_annual_return(self):
         
-        benchmark_daily_levels_y = self.daily_benchmark_levels[self.daily_benchmark_levels['Year']==year]
+        benchmark_daily_levels_y = self.daily_benchmark_levels[self.daily_benchmark_levels['Year']==self.year]
         benchmark_daily_levels_y = benchmark_daily_levels_y.sort_index(ascending = True)
         
         level_t0 = benchmark_daily_levels_y.iloc[0]['Adj Close']
@@ -106,8 +106,10 @@ class PortfolioBuilder:
         
         assert year in [2014, 2015, 2016, 2017], "Invalid y argument.  Must be 2014, 2015, 2016 or 2017."
         
+        self.year = year
+        
         year_dataset, X_train, X_test, Y_train, Y_test = get_train_test(self.data,
-                                                                        year,
+                                                                        self.year,
                                                                         X_columns,
                                                                         Y_label)
         
@@ -127,6 +129,8 @@ class PortfolioBuilder:
                                       pred_proba_short_list, 
                                       pred_proba_long_list, 
                                       self.proba_weighted)
+        
+        #print(year_dataset)
 
         weights = year_dataset['Weight']
         stocks = year_dataset['Ticker']
@@ -140,15 +144,35 @@ class PortfolioBuilder:
         self.portfolio_stdev = np.sqrt(np.dot(weights.T,np.dot(annual_cov_matrix,weights)))
         
         ## Annual Risk-Free Rate
-        rf_rate = get_rf_rate(year)
+        rf_rate = get_rf_rate(self.year)
 
         ## Portfolio Sharpe ratio 
         self.portfolio_sharpe_ratio = (self.portfolio_return - rf_rate) / self.portfolio_stdev
 
         ##  Benchmark Sharpe ratio
-        benchmark_ret = self.get_benchmark_annual_return(year)
+        benchmark_ret = self.get_benchmark_annual_return()
         benchmark_std = self.daily_benchmark_levels['Adj Close'].std() * np.sqrt(DAYS_IN_YEAR)
         
         self.benchmark_sharpe_ratio = (benchmark_ret - rf_rate) / benchmark_std
         
+        self.dict_predictions = pd.Series(year_dataset['Ticker'].values,index=year_dataset['Predictions']).to_dict()
+        self.dict_weights = pd.Series(year_dataset['Ticker'].values,index=year_dataset['Weights']).to_dict()
+        
         return self
+    
+    def get_dict_predictions(self):
+        
+        return self.dict_predictions
+    
+    
+    def get_dict_weights(self):
+        
+        return self.dict_weights
+    
+    def print_sharpe_ratio(self):
+        
+        print("\n")
+        print('Sharpe ratio comparison for the year {}:'.format(self.year))
+        print('Portfolio Sharpe Ratio: {}'.format(round(self.portfolio_sharpe_ratio,5)))
+        print('{} Sharpe Ratio:{}'.format(benchmark_dict[self.benchmark], round(self.benchmark_sharpe_ratio,5)))
+        print('**********************************************s')

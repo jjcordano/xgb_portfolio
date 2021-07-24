@@ -7,13 +7,15 @@ from sklearn.metrics import accuracy_score
 DAYS_IN_YEAR = 252
 
 ## Paths
-PATH_DATAFOLDER = r'data/'
+PATH_DATAFOLDER = r'../data/'
 PATH_ESG_METRICS = r'data_fi_v2.csv'
 PATH_PRICES = r'prices.csv'
 PATH_EUROSTOXX600 = r'STOXX600.csv'
 PATH_RUSSELL3000 = r'RUSSELL.csv'
 PATH_RF_RATE = r'FR_TBill_10y.csv'
 
+
+## Lists and dicts
 X_columns = ['NUMBER_EMPLOYEES_CSR','AUDIT_COMMITTEE_MEETINGS', 'SAY_PAY_SUPPORT_LEVEL',
              'TOT_OTHER_COMP_AW_TO_CEO_&_EQUIV', 'TOTAL_EXEC_PAY_AS_PCT_OPEX',
              'TOT_SALARIES_PAID_TO_CEO_&_EQUIV', 'TOT_SALARIES_&_BNS_PD_TO_EXECS',
@@ -27,6 +29,11 @@ X_columns = ['NUMBER_EMPLOYEES_CSR','AUDIT_COMMITTEE_MEETINGS', 'SAY_PAY_SUPPORT
              'BLANK_CHECK_PREFERRED_AUTHORIZED']
 
 Y_label = 'Label'
+
+benchmark_dict = {
+    'eurostoxx_600': 'Eurostoxx 600',
+    'russell_3000': 'Russell 3000'
+}
 
 
 ## Helper functions
@@ -239,7 +246,7 @@ def xgb_predict(xgb_params,
                 Y_test,
                 print_accuracy):
     
-    model = xgboost.XGBClassifier(**xgb_params)
+    model = xgboost.XGBClassifier(**xgb_params, use_label_encoder = False)
     model.fit(X_train,Y_train)
 
     y_pred = model.predict(X_test)
