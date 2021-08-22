@@ -1,9 +1,7 @@
-import numpy as np
-import pandas as pd
-import xgboost
-from sklearn.metrics import accuracy_score
+from code.helpers import *
+from code.portfolio_builder import PortfolioBuilder
 
-from portfolio_builder import PortfolioBuilder
+pd.options.mode.chained_assignment = None  # default='warn'
 
 for year in range(2014, 2018):
     y_portfolio = portfolio_2017 = PortfolioBuilder().init_data().fit_portfolio(year)

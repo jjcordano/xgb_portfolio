@@ -3,14 +3,27 @@ import numpy as np
 import pandas as pd
 import xgboost
 
-from helpers import *
+from code.helpers import *
 
 class PortfolioBuilder:
+    
+    """
+    XGBoost classifier object that uses selected stocks' ESG metrics to select stocks in a portfolio.
+    
+    Arguments:
+    - benchmark: String, selected stock index on which to compute excess returns.  Benchmark should be either 'eurostoxx_600' or 'russell_3000'.
+    Defaults to 'eurostoxx_600' as selected stocks are of large european capitalizations.
+    - probability_weighted: Boolean, if True, weight of stock in portfolio weighted by probability that XGBoost prediction is correct.
+    - bucket_delimiters: Tuple, gives limits between short, ignore and long buckets for stock returns in excess of benchmark.
+    - short_limit: Float, stock value under which stocks will not be shorted.
+    """    
+
+    
     def __init__(self,
                  benchmark = 'eurostoxx_600',
                  probability_weighted = True,
-                 bucket_delimiters = (-.15,.18),
-                 short_limit = 10):
+                 bucket_delimiters = (-0.15,0.18),
+                 short_limit = 10.0):
         
         assert benchmark in ['eurostoxx_600','russell_3000'], "Benchmark argument not valid. Must either be 'eurostoxx_600' or 'russell_3000'."
 
@@ -41,18 +54,12 @@ class PortfolioBuilder:
         along the lines of the 2020 paper 'Seeking Signals from ESG Data' by Bloomberg Quant Research.
 
         Arguments:
-
         - esg_metrics_path: path to CSV file containing Bloomberg ESG metrics for selected companies.  
         Default is path to ESG data for 46 european companies between 2007 and 2017.
 
         - prices_path: path to CSV file containing year-end prices for selected companies.
         Default is path to prices for 46 european companies between 2007 and 2017.
         '''
-
-        benchmark_path_dict = {
-            'eurostoxx_600' : PATH_DATAFOLDER + PATH_EUROSTOXX600,
-            'russell_3000' : PATH_DATAFOLDER + PATH_RUSSELL3000
-            }
 
         ## Import Bloomberg ESG metrics for selected companies from Excel file
         data = pd.read_csv(esg_metrics_path)
@@ -84,6 +91,12 @@ class PortfolioBuilder:
         
     def get_benchmark_annual_return(self):
         
+        """Method that computes annual return for the selected test year.
+
+        Returns:
+            Float: annual benchmark return.
+        """        
+        
         benchmark_daily_levels_y = self.daily_benchmark_levels[self.daily_benchmark_levels['Year']==self.year]
         benchmark_daily_levels_y = benchmark_daily_levels_y.sort_index(ascending = True)
         
@@ -95,14 +108,19 @@ class PortfolioBuilder:
     
     def fit_portfolio(self,
                         year = 2017,
-                        xgb_params = {'n_estimators':200,
-                                      'learning_rate':0.1,
-                                      'max_depth':5,
-                                      'min_child_weight':5,
-                                      'subsample':0.8,
-                                      'colsample_bytree':0.8,
-                                     },
+                        xgb_params = DEFAULT_XGB_PARAMS,
                         print_accuracy = False):
+        
+        """Creates portfolio based on XGBoost classfications of short, ignore or long for a chosen year between 2014 and 2017.
+        
+        Arguments:
+        - year: Integer, year chosen for annually held portfolio.  Model will be trained on 7 previous years.  Defaults to 2017.
+        - xgb_params: Dict, parameters of XGBoost classifier.  Defaults to parameters used in 'Seeking Signals from ESG Data' paper by Bloomberg Quant Research.
+        - print_accuracy: Boolean, if True, accuracy of XGBoost classifier is printed. Defaults to False.
+
+        Returns:
+            PortfolioBuilder: self.
+        """        
         
         assert year in [2014, 2015, 2016, 2017], "Invalid y argument.  Must be 2014, 2015, 2016 or 2017."
         
@@ -156,23 +174,43 @@ class PortfolioBuilder:
         self.benchmark_sharpe_ratio = (benchmark_ret - rf_rate) / benchmark_std
         
         self.dict_predictions = pd.Series(year_dataset['Ticker'].values,index=year_dataset['Predictions']).to_dict()
-        self.dict_weights = pd.Series(year_dataset['Ticker'].values,index=year_dataset['Weights']).to_dict()
+        self.dict_weights = pd.Series(year_dataset['Ticker'].values,index=year_dataset['Weight']).to_dict()
         
         return self
     
     def get_dict_predictions(self):
+        
+        """
+        Method that returns the prediction (0: short, 1: ignore, 2: long) for each stock.
+
+        Returns:
+            Dictionary: Prediction for each stock.
+        """        
         
         return self.dict_predictions
     
     
     def get_dict_weights(self):
         
+        """
+        Method that returns the weights associated to each stock.
+
+        Returns:
+            Dictionary: Weights associated to each stock.
+        """        
+        
         return self.dict_weights
     
     def print_sharpe_ratio(self):
         
+        """
+        Prints portfolio Sharpe ratio and compares it to benchmark's Sharpe ratio.
+        """        
+        
+        print('**********************************************')
         print("\n")
         print('Sharpe ratio comparison for the year {}:'.format(self.year))
         print('Portfolio Sharpe Ratio: {}'.format(round(self.portfolio_sharpe_ratio,5)))
         print('{} Sharpe Ratio:{}'.format(benchmark_dict[self.benchmark], round(self.benchmark_sharpe_ratio,5)))
-        print('**********************************************s')
+        print("\n")
+        print('**********************************************')

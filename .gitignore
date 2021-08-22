@@ -3,3 +3,5 @@ main2.py
 get-pip.py
 __pycache__/*
 __pycache__/
+Test.ipynb
+.ipynb_checkpoints/Test-checkpoint.ipynb
