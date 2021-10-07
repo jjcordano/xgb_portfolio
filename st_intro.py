@@ -45,7 +45,7 @@ def app():
        
         
         st.write("## Compare companies' stock prices")
-        viz1_stock_selection = st.multiselect('Choose the firms whose stock price you want to compare',
+        viz1_stock_selection = st.multiselect('Choose the firms whose stock prices you want to compare',
                     options = list(companies_dict.keys()),
                     default=list(companies_dict.keys())[:3])
         
