@@ -1,5 +1,7 @@
 # Portfolio builder that uses Bloomberg ESG metrics and XGBoost classifier
 
+Link to the Web Application: [HERE](https://share.streamlit.io/jjcordano/xgb_portfolio/main/st_app.py)
+
 ## Intuition
 This model replicates a methodology presented in the 2020 paper _[Seeking Signals from ESG Data](https://www.bloomberg.com/professional/blog/seeking-signals-from-esg-data/)_ by Bloomberg Quant Research. 
 
@@ -29,8 +31,6 @@ Like in the original paper, we build 4 annual portfolios for 2014, 2015, 2016 an
 Depending on the class predicted by the model, a position is taken in each stock. 
 - __Original method__: each stock in the same class is gven the same weight.
 - __Probability-Weighted method__: each stock's weight is multiplied by the stock's probability of being in the given class divided by the total probabilities of stocks in that predicted class.
-
-## Shap Values
 
 ## The `PortfolioBuilder` class
 
