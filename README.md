@@ -1,7 +1,7 @@
 # Portfolio builder that uses Bloomberg ESG metrics and XGBoost classifier
 
 ## Interactive Web Application
-Link to the Web Application: [**HERE**](https://share.streamlit.io/jjcordano/xgb_portfolio/main/st_app.py)
+Access to the Web Application: [**HERE**](https://share.streamlit.io/jjcordano/xgb_portfolio/main/st_app.py)
 
 ## Intuition
 This model replicates a methodology presented in the 2020 paper _[Seeking Signals from ESG Data](https://www.bloomberg.com/professional/blog/seeking-signals-from-esg-data/)_ by Bloomberg Quant Research. 
