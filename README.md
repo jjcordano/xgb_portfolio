@@ -1,7 +1,7 @@
 # Portfolio builder that uses Bloomberg ESG metrics and XGBoost classifier
 
 ## Intuition
-This model replicates a methodology presented in the 2020 paper '[Seeking Signals from ESG Data](https://www.bloomberg.com/professional/blog/seeking-signals-from-esg-data/)' by Bloomberg Quant Research. 
+This model replicates a methodology presented in the 2020 paper _[Seeking Signals from ESG Data](https://www.bloomberg.com/professional/blog/seeking-signals-from-esg-data/)_ by Bloomberg Quant Research. 
 
 The presented model breaks down stock price prediction into a classification problem with 3 labels : positive returns, negative returns and no siginificant returns. Depending of the predicitons, a long position, a short position or no position will be taken for the given stock.
 
@@ -9,17 +9,17 @@ To make this classification, the dependant variables are a set of 21 annual ESG 
 
 The proposed machine learning algorithm for this task is XGBoost as it is a high performing model and [it can handle missing values without preprocessing](https://xgboost.readthedocs.io/en/latest/faq.html).
 
-In the first part of this project, we replicate the methodology presented by Bloomberg Quantitative Research that gives equal weights to all stocks and compare the observed annual retruns and Sharpe ratios to the Eurostoxx 600 benchmark.\
+In the first part of this project, we replicate the methodology presented by Bloomberg Quantitative Research that gives equal weights to all stocks and compare the observed annual returns and Sharpe ratios to the Eurostoxx 600 benchmark.\
 In the second part, we implement a method that applies more weights to stocks that have a higher probability of being in the predicted class.
 
 We find that this method consistently outperforms the equal-weight method.
 
 ## Data
-The classes are built using the annual returns of stocks in excess of Eurostoxx 600 returns. Excess returns above +18% are classified as 'long', those between +18% and -15% are classified as 'omit' and those below -12% are put in the 'short' class. For a given year Y and a given company, the label is the class computed for Y+1. Annual returns are computed from Yahoo Finance price data.
+For a given year Y and a given company, the label is the class computed for Y+1. The classes are built using the annual returns of stocks in excess of Eurostoxx 600 returns. Excess returns above +18% are classified as 'long', those between +18% and -15% are classified as 'omit' and those below -12% are put in the 'short' class.  Annual returns are computed from Yahoo Finance price data.
 
 Available annual ESG metric data from 2007 to 2017 has been gathered using a Bloomberg subscription for the 45 considered European companies. 
 
-As stated in the original paper: "about 60% of ESG metrics have a Missing Rate (de ned as the proportion of records for which the value is missing) of more than 50% in Bloomberg's ESG dataset on US companies over the past 14 years" (BQR, 2020). The reason for this is that companies do not have the obligation to publish information about Environmental, Social and Governance aspects of their business.
+As stated in the original paper: "about 60% of ESG metrics have a Missing Rate (defined as the proportion of records for which the value is missing) of more than 50% in Bloomberg's ESG dataset on US companies over the past 14 years" (BQR, 2020). The reason for this is that companies do not have the obligation to publish information about Environmental, Social and Governance aspects of their business.
 
 In our ESG metric dataset, missing values presents approx. 40% of all values in a total of 17,940 data points.
 
