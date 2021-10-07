@@ -15,7 +15,7 @@ In the second part, we implement a method that applies more weights to stocks th
 We find that this method consistently outperforms the equal-weight method.
 
 ## Data
-For a given year Y and a given company, the label is the class computed for Y+1. The classes are built using the annual returns of stocks in excess of Eurostoxx 600 returns. Excess returns above +18% are classified as 'long', those between +18% and -15% are classified as 'omit' and those below -12% are put in the 'short' class.  Annual returns are computed from Yahoo Finance price data.
+For a given year Y and a given company, the label is the class computed for Y+1. The classes are built using the annual returns of stocks in excess of Eurostoxx 600 returns. Excess returns above +18% are classified as 'long', those between +18% and -15% are classified as 'omit' and those below -15% are put in the 'short' class.  Annual returns are computed from Yahoo Finance price data.
 
 Available annual ESG metric data from 2007 to 2017 has been gathered using a Bloomberg subscription for the 45 considered European companies. 
 
