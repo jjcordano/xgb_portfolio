@@ -41,11 +41,8 @@ def app():
         st.markdown("The classes are built using the annual returns of stocks in excess of Eurostoxx 600 returns.")
         st.markdown("- Excess returns above +18% are classified as '***long***' (***2***)")
         st.markdown("- Those between +18% and -15% are classified as '***omit***'(***1***)")
-        st.markdown("- those below -12% are put in the 'short' class (***0***).")
-        
-        
-        #st.write('Daily Stock Prices Data:')
-        #st.write(pb0.prices.head(20))
+        st.markdown("- those below -15% are put in the '***short***' class (***0***).")
+       
         
         st.write("## Compare companies' stock prices")
         viz1_stock_selection = st.multiselect('Choose the firms whose stock price you want to compare',
