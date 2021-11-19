@@ -30,3 +30,5 @@ page.app()
 st.sidebar.text('Authors: \n Jean-Julien Cordano \n Nelson Castro \n Nirushanth Arishandra')
 st.sidebar.text('Streamlit App by \n Jean-Julien Cordano')
 st.sidebar.text('Université Paris 1 Panthéon-Sorbonne')
+
+st.sidebar.text('[Github](https://github.com/jjcordano/xgb_portfolio)')
